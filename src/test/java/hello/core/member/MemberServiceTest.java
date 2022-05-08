@@ -1,13 +1,14 @@
 package hello.core.member;
 
-import org.assertj.core.api.Assertions;
+import hello.core.AppConfig;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MemberServiceTest {
 
-    private final MemberService memberService = new MemberServiceImpl();
+    AppConfig appConfig = new AppConfig();
+    private final MemberService memberService = appConfig.memberService();
 
     @Test
     public void join() {
