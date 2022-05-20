@@ -1,11 +1,12 @@
 package hello.core.singleton;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class StateTest {
 
@@ -23,7 +24,20 @@ public class StateTest {
         //ThreadA: 사용자A 주문금액 조회
         int price = statefulService1.getPrice();
         //ThreadA: 사용자A의 주문에 대한 금액인 10000원을 기대했지만, 기대와 다르게 20000원이 나온다.
-        Assertions.assertThat(price).isEqualTo(20000);
+        assertThat(price).isEqualTo(20000);
+    }
+
+    @Test
+    void statelessServiceTest() {
+        ApplicationContext ac = new AnnotationConfigApplicationContext(TestConfig.class);
+        StatelessService statelessService = ac.getBean("statelessService", StatelessService.class);
+        //ThreadA: A사용자 10000원 주문 및 사용자A 주문금액 조회
+        int userAPrice = statelessService.order("userA", 10000);
+        //ThreadB: B사용자 20000원 주문 및 사용자B 주문금액 조회
+        int userBPrice = statelessService.order("userB", 20000);
+
+        //사용
+        assertThat(userAPrice).isEqualTo(10000);
     }
 }
 
@@ -33,5 +47,10 @@ class TestConfig {
     @Bean
     public StatefulService statefulService() {
         return new StatefulService();
+    }
+
+    @Bean
+    public StatelessService statelessService() {
+        return new StatelessService();
     }
 }
