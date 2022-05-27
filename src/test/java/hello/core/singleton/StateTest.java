@@ -12,7 +12,7 @@ public class StateTest {
 
     @Test
     void statefulServiceTest() {
-        ApplicationContext ac = new AnnotationConfigApplicationContext(TestConfig.class);
+        ApplicationContext ac = new AnnotationConfigApplicationContext(StateTestConfig.class);
         StatefulService statefulService1 = ac.getBean("statefulService", StatefulService.class);
         StatefulService statefulService2 = ac.getBean("statefulService", StatefulService.class);
 
@@ -29,7 +29,7 @@ public class StateTest {
 
     @Test
     void statelessServiceTest() {
-        ApplicationContext ac = new AnnotationConfigApplicationContext(TestConfig.class);
+        ApplicationContext ac = new AnnotationConfigApplicationContext(StateTestConfig.class);
         StatelessService statelessService = ac.getBean("statelessService", StatelessService.class);
         //ThreadA: A사용자 10000원 주문 및 사용자A 주문금액 조회
         int userAPrice = statelessService.order("userA", 10000);
@@ -42,7 +42,7 @@ public class StateTest {
 }
 
 @Configuration
-class TestConfig {
+class StateTestConfig {
 
     @Bean
     public StatefulService statefulService() {
