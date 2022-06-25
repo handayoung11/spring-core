@@ -33,6 +33,30 @@ public class SingletonWithPrototypeTest {
         assertSame(bean2.logic(), 2);
     }
 
+    @Test
+    void singletonUsesPrototypeWithContext() {
+        ApplicationContext ac = new AnnotationConfigApplicationContext(PrototypeBean.class, ClientBeanWithContext.class);
+        ClientBeanWithContext bean1 = ac.getBean(ClientBeanWithContext.class);
+        assertSame(bean1.logic(), 1);
+        ClientBeanWithContext bean2 = ac.getBean(ClientBeanWithContext.class);
+        assertSame(bean2.logic(), 1);
+    }
+
+    @Scope("singleton")
+    static class ClientBeanWithContext {
+        private final ApplicationContext ac;
+
+        public ClientBeanWithContext(ApplicationContext ac) {
+            this.ac = ac;
+        }
+
+        public int logic() {
+            PrototypeBean bean = ac.getBean(PrototypeBean.class);
+            bean.addCount();
+            return bean.getCount();
+        }
+    }
+
     @Scope("singleton")
     static class ClientBean {
         private final PrototypeBean prototypeBean;
