@@ -24,6 +24,29 @@ public class SingletonWithPrototypeTest {
         assertSame(bean2.getCount(), 1);
     }
 
+    @Test
+    void singletonUsesPrototype() {
+        ApplicationContext ac = new AnnotationConfigApplicationContext(PrototypeBean.class, ClientBean.class);
+        ClientBean bean1 = ac.getBean(ClientBean.class);
+        assertSame(bean1.logic(), 1);
+        ClientBean bean2 = ac.getBean(ClientBean.class);
+        assertSame(bean2.logic(), 2);
+    }
+
+    @Scope("singleton")
+    static class ClientBean {
+        private final PrototypeBean prototypeBean;
+
+        public ClientBean(PrototypeBean prototypeBean) {
+            this.prototypeBean = prototypeBean;
+        }
+
+        public int logic() {
+            prototypeBean.addCount();
+            return prototypeBean.getCount();
+        }
+    }
+
     @Scope("prototype")
     static class PrototypeBean {
         private int count = 0;
